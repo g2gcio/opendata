@@ -53,9 +53,7 @@ P = '\033[35m'  # purple
 
 colors = [B, G, O, R]
 
-
 # Basic Colors
-
 non_zero_cells = [
     item
     for row in grid
