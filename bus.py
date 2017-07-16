@@ -1,4 +1,3 @@
-
 # Getting Started
 
 # Need to get this key from https://www.mytransport.sg/content/mytransport/home/dataMall.html
