@@ -8,7 +8,7 @@ import requests
 
 incidents = requests.get(
     'http://datamall2.mytransport.sg/ltaodataservice/TrafficIncidents',
-    headers = {"AccountKey": key}
+    headers={"AccountKey": key}
 ).json()
 
 len(incidents)
@@ -24,29 +24,30 @@ len(incidents['value'])
 
 incidents2 = requests.get(
     'http://datamall2.mytransport.sg/ltaodataservice/TrafficIncidents',
-    params = {"$skip": 50},
-    headers = {"AccountKey": key}
+    params={"$skip": 50},
+    headers={"AccountKey": key}
 ).json()
 
 
 stops = requests.get(
     'http://datamall2.mytransport.sg/ltaodataservice/BusStops',
-    params = {"$skip": 50},
-    headers = {"AccountKey": key}
+    params={"$skip": 50},
+    headers={"AccountKey": key}
 ).json()
 
 
 stops2 = requests.get(
     'http://datamall2.mytransport.sg/ltaodataservice/BusStops',
-    params = {"$skip": 50},
-    headers = {"AccountKey": key}
+    params={"$skip": 50},
+    headers={"AccountKey": key}
 ).json()
+
 
 def fetch(path, **params):
     return requests.get(
         path,
-        params = params,
-        headers = {"AccountKey": key}
+        params=params,
+        headers={"AccountKey": key}
     ).json()
 
 
@@ -60,8 +61,8 @@ def fetch_all(path, **params):
     while True:
         fetched = requests.get(
             path,
-            params = {**params, "$skip": len(output)},
-            headers = {"AccountKey": key}
+            params={**params, "$skip": len(output)},
+            headers={"AccountKey": key}
         ).json()
         if 'value' not in fetched:
             print(fetched)
@@ -71,6 +72,7 @@ def fetch_all(path, **params):
         else:
             print("fetched: ", len(output))
             output.extend(fetched['value'])
+
 
 all_incidents = fetch_all('http://datamall2.mytransport.sg/ltaodataservice/TrafficIncidents')
 
@@ -82,9 +84,9 @@ all_stops[0]
 
 all_stops[0]['BusStopCode']
 
+
 def find_stop(string):
     return [stop for stop in all_stops if string in stop['Description']]
-
 
 
 all_services = fetch_all('http://datamall2.mytransport.sg/ltaodataservice/BusServices')
@@ -106,11 +108,13 @@ orchard_bus_timings = [
     for stop in find_stop("Opp Orchard Stn")
     for service in fetch(
         'http://datamall2.mytransport.sg/ltaodataservice/BusArrival',
-        BusStopID = stop["BusStopCode"]
+        BusStopID=stop["BusStopCode"]
     )["Services"]
 ]
 
 import datetime
+
+
 def pretty_time(timestring):
     now = datetime.datetime.now(datetime.timezone.utc)
     if timestring == "":
@@ -120,9 +124,10 @@ def pretty_time(timestring):
             timestring[:-6],
             "%Y-%m-%dT%H:%M:%S"
         )
-        delta = parsed.replace(tzinfo = datetime.timezone.utc) - now
+        delta = parsed.replace(tzinfo=datetime.timezone.utc) - now
 
         return str(int(delta.seconds / 60)) + "min"
+
 
 [
     (service, pretty_time(timestring))
@@ -140,7 +145,6 @@ find_stop("Anglo-Chinese Sch")
 # 40069
 
 
-
 all_route_stops[0]
 
 all_routes = {}
@@ -155,7 +159,7 @@ import pprint
 pprint.pprint(list(all_routes.keys()))
 
 for k, v in all_routes.items():
-    v.sort(key = lambda route_stop: route_stop["StopSequence"])
+    v.sort(key=lambda route_stop: route_stop["StopSequence"])
 
 all_stop_connections = {}
 for route in all_routes.values():
@@ -163,7 +167,7 @@ for route in all_routes.values():
         code = route[i]["BusStopCode"]
         if code not in all_stop_connections:
             all_stop_connections[code] = []
-        for j in range(i+1, len(route)):
+        for j in range(i + 1, len(route)):
             all_stop_connections[code].append(
                 (route[j]["ServiceNo"], route[j]['BusStopCode'])
             )
